@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { decipherToken } from '../utils/functions'
 import BlogsModel from '../models/blogs.models'
 import UserModel from '../models/users.models'
+import BlogCache from '../cache/blogs.cache'
 
 const test = (_req: Request, res: Response) => {
   res.status(200).json({
@@ -19,6 +20,17 @@ const getBlogs = async (req: Request, res: Response) => {
     })
   }
   try {
+    if (
+      BlogCache.get('email') === email.toLowerCase() &&
+      BlogCache.get('pageNumber') === pageNumber &&
+      BlogCache.get('sort') === sort.toLowerCase()
+    ) {
+      console.log('Getting from the cache...')
+      return res.status(200).json({
+        message: 'Blogs fetched successfully',
+        blogs: BlogCache.get('blogs')
+      })
+    }
     const users = await UserModel.findOne({ email: email })
     if (!users) {
       return res.status(404).json({
@@ -31,6 +43,10 @@ const getBlogs = async (req: Request, res: Response) => {
       .sort({
         createdAt: sort === 'desc' ? -1 : 1
       })
+    BlogCache.set('email', email)
+    BlogCache.set('pageNumber', pageNumber)
+    BlogCache.set('sort', sort)
+    BlogCache.set('blogs', blogs)
     return res.status(200).json({
       message: `All the blogs from ${email}`,
       blogs: blogs.length > 0 ? blogs : 'No more blogs...'
@@ -61,6 +77,7 @@ const createBlog = async (req: Request, res: Response) => {
       createdAt: new Date().toISOString()
     })
     await blog.save()
+    BlogCache.flushAll()
     return res.status(201).json({
       message: 'Blog created successfully'
     })
@@ -96,6 +113,7 @@ const updateBlog = async (req: Request, res: Response) => {
     blog.title = title
     blog.description = description
     await blog.save()
+    BlogCache.flushAll()
     return res.status(200).json({
       message: 'Blog updated successfully'
     })
@@ -123,6 +141,7 @@ const deleteBlog = async (req: Request, res: Response) => {
       })
     }
     await blog.delete()
+    BlogCache.flushAll()
     return res.status(200).json({
       message: 'Blog deleted successfully'
     })
