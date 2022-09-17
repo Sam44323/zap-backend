@@ -40,9 +40,9 @@ const createBlog = async (req: Request, res: Response) => {
 
 const updateBlog = async (req: Request, res: Response) => {
   const { title, description } = req.body
-  if (!title || !description || !req.headers.authorization) {
+  if (!title || !description) {
     return res.status(400).json({
-      message: 'Bad request'
+      message: 'Incomplete data'
     })
   }
   const decipheredToken = decipherToken(req.headers.authorization)
@@ -74,11 +74,6 @@ const updateBlog = async (req: Request, res: Response) => {
 }
 
 const deleteBlog = async (req: Request, res: Response) => {
-  if (!req.headers.authorization) {
-    return res.status(400).json({
-      message: 'Bad request'
-    })
-  }
   const decipheredToken = decipherToken(req.headers.authorization)
   const author = decipheredToken.email
   try {
