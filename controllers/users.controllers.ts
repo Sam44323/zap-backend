@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import UserModel from '../models/users.models'
+import BlogsModel from '../models/blogs.models'
 import { validateEmail } from '../utils/functions'
 
 const test = (_req: Request, res: Response) => {
@@ -68,6 +69,26 @@ const login = async (req: Request, res: Response) => {
   }
 }
 
-const deleteUser = async (req: Request, res: Response) => {}
+const deleteUser = async (req: Request, res: Response) => {
+  const { id } = req.params
+  try {
+    const user = await UserModel.findById(id)
+    if (!user) {
+      return res.status(400).json({
+        message: 'User does not exist!'
+      })
+    }
+    await BlogsModel.deleteMany({ author: id })
+    await UserModel.findByIdAndDelete(id)
+    return res.status(200).json({
+      message: 'User deleted successfully!'
+    })
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({
+      message: 'Something went wrong!'
+    })
+  }
+}
 
 export { test, signup, login, deleteUser }
