@@ -19,6 +19,7 @@ const createBlog = async (req: Request, res: Response) => {
   }
   const decipheredToken = decipherToken(req.headers.authorization)
   const author = decipheredToken.email
+  console.log('Token: ', decipheredToken)
   try {
     const blog = new BlogsModel({
       title,

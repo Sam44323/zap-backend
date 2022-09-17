@@ -54,9 +54,13 @@ const login = async (req: Request, res: Response) => {
         message: 'User does not exist!'
       })
     }
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '1d'
-    })
+    const token = jwt.sign(
+      { id: user._id, email: user.email, name: user.name },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '1d'
+      }
+    )
     return res.status(200).json({
       message: 'User logged in successfully!',
       token
