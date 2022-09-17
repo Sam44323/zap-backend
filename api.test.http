@@ -1,0 +1,77 @@
+# Testing the uptime for users-controller
+
+curl -X GET \
+  'http://localhost:3001/api/users/test'
+
+# Creting a new-user
+
+curl -X POST \
+  'http://localhost:3001/api/users/signup' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+  "name": "Test Name",
+  "email": "test@email.com"
+}'
+
+# Logging in the user
+
+curl -X POST \
+  'http://localhost:3001/api/users/login' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+  "email": "test@email.com"
+}'
+
+# Delete an user
+
+curl -X DELETE  \
+  'http://localhost:3001/api/users/delete' \
+  --header 'Authorization: <jwt-token>' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+  "email": "test@email.com"
+}'
+
+# Testing the uptime for blogs-controllers
+
+curl -X GET \
+  'http://localhost:3001/api/users/test'
+
+# Getting the blogs for a particular users with all-filters
+
+curl -X POST \
+  'http://localhost:3001/api/blogs/getBlogs' \
+  --header 'Authorization: <jwt-token>' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+  "email": "test@email.com",
+  "pageNumber": 1,
+  "sort": "desc"
+}'
+
+# Creating a new-blog
+
+curl -X POST  \
+  'http://localhost:3001/api/blogs/blog' \
+  --header 'Authorization: <jwt-token>' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+  "title": "Title for test",
+  "description": "Description for test"
+}'
+
+# Updating a blog
+curl -X PUT \
+  'http://localhost:3001/api/blogs/update/:id' \
+  --header 'Authorization: <jwt-token>' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+  "title": "Title for test is updated",
+  "description": "Description for test is updated"
+}'
+
+# Deleting a blog
+
+curl -X DELETE \
+  'http://localhost:3001/api/blogs/:id' \
+  --header 'Authorization: <jwt-token>'
