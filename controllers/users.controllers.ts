@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import UserModel from '../models/users.models'
 import BlogsModel from '../models/blogs.models'
-import { validateEmail } from '../utils/functions'
+import { decipherToken, validateEmail } from '../utils/functions'
 
 const test = (_req: Request, res: Response) => {
   res.status(200).json({
@@ -74,15 +74,15 @@ const login = async (req: Request, res: Response) => {
 }
 
 const deleteUser = async (req: Request, res: Response) => {
-  const { email } = req.body
+  const decipheredToken: JwtPayload = decipherToken(req.headers.authorization)
   try {
-    const user = await UserModel.findOne({ email })
+    const user = await UserModel.findOne({ email: decipheredToken.email })
     if (!user) {
       return res.status(400).json({
         message: 'User does not exist!'
       })
     }
-    await BlogsModel.deleteMany({ author: user._id })
+    await BlogsModel.deleteMany({ author: user.email })
     await UserModel.findByIdAndDelete(user._id)
     return res.status(200).json({
       message: 'User deleted successfully!'
