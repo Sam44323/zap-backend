@@ -70,16 +70,16 @@ const login = async (req: Request, res: Response) => {
 }
 
 const deleteUser = async (req: Request, res: Response) => {
-  const { id } = req.params
+  const { email } = req.body
   try {
-    const user = await UserModel.findById(id)
+    const user = await UserModel.findOne({ email })
     if (!user) {
       return res.status(400).json({
         message: 'User does not exist!'
       })
     }
-    await BlogsModel.deleteMany({ author: id })
-    await UserModel.findByIdAndDelete(id)
+    await BlogsModel.deleteMany({ author: user._id })
+    await UserModel.findByIdAndDelete(user._id)
     return res.status(200).json({
       message: 'User deleted successfully!'
     })
