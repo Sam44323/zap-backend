@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import jwt from 'jsonwebtoken'
+import { decipherToken } from '../utils/functions'
 import BlogsModel from '../models/blogs.models'
 
 const test = (_req: Request, res: Response) => {
