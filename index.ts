@@ -5,6 +5,10 @@ import helmet from 'helmet'
 import mongoose from 'mongoose'
 import Logger from './utils/logger'
 
+// routes
+import userRouter from './routes/users.routes'
+import blogsRouter from './routes/blogs.routes'
+
 dotenv.config()
 
 const app = express()
@@ -34,9 +38,8 @@ connection.on('disconnected', () => {
   Logger.info('🔌 Mongoose default connection to DB disconnected')
 })
 
-// app.use('/api/users', userRouter)
-// app.use('/api/seller', sellerRouter)
-// app.use('/api/buyer', buyerRouter)
+app.use('/api/users', userRouter)
+app.use('/api/blogs', blogsRouter)
 
 const port = process.env.PORT || 3001
 app.listen(port, () => {
