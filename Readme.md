@@ -69,4 +69,10 @@ cp .example.env .env
 yarn start
 ```
 
+**Running the tests**
+
+```bash
+yarn test
+```
+
 ---
