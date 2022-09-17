@@ -73,6 +73,36 @@ const updateBlog = async (req: Request, res: Response) => {
   }
 }
 
-const deleteBlog = async (req: Request, res: Response) => {}
+const deleteBlog = async (req: Request, res: Response) => {
+  if (!req.headers.authorization) {
+    return res.status(400).json({
+      message: 'Bad request'
+    })
+  }
+  const decipheredToken = decipherToken(req.headers.authorization)
+  const author = decipheredToken.email
+  try {
+    const blog = await BlogsModel.findById(req.params.id)
+    if (!blog) {
+      return res.status(404).json({
+        message: 'Blog not found'
+      })
+    }
+    if (blog.author !== author) {
+      return res.status(401).json({
+        message: 'Unauthorized'
+      })
+    }
+    await blog.delete()
+    return res.status(200).json({
+      message: 'Blog deleted successfully'
+    })
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({
+      message: 'Internal server error'
+    })
+  }
+}
 
 export { test, getBlogs, createBlog, updateBlog, deleteBlog }
