@@ -9,7 +9,7 @@ import {
 
 const blogsRouter = Router()
 blogsRouter.get('/test', test)
-blogsRouter.get('/blogs', getBlogs)
+blogsRouter.get('/getBlogs', getBlogs)
 blogsRouter.post('/blog', createBlog)
 blogsRouter.put('/blog/update/:id', updateBlog)
 blogsRouter.delete('/:id', deleteBlog)
