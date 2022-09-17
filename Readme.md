@@ -24,7 +24,6 @@
 ---
 
 - **Typescript**
-- **Typescript**
 - **NodeJS**
 - **ExpressJS**
 - **MongoDB**
