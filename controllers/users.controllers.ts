@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import jwt from 'jsonwebtoken'
 import UserModel from '../models/users.models'
 import { validateEmail } from '../utils/functions'
 
@@ -38,4 +39,35 @@ const signup = async (req: Request, res: Response) => {
   }
 }
 
-export { test, signup }
+const login = async (req: Request, res: Response) => {
+  const { email } = req.body
+  if (!email || !validateEmail(email)) {
+    return res.status(400).json({
+      message: 'Email is missing or email is invalid!'
+    })
+  }
+  try {
+    const user = await UserModel.findOne({ email })
+    if (!user) {
+      return res.status(400).json({
+        message: 'User does not exist!'
+      })
+    }
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '1d'
+    })
+    return res.status(200).json({
+      message: 'User logged in successfully!',
+      token
+    })
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({
+      message: 'Something went wrong!'
+    })
+  }
+}
+
+const deleteUser = async (req: Request, res: Response) => {}
+
+export { test, signup, login, deleteUser }
