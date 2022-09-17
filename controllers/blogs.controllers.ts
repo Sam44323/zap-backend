@@ -9,11 +9,13 @@ const test = (_req: Request, res: Response) => {
   })
 }
 
+const PAGE_LIMIT: number = parseInt(process.env.PAGE_LIMIT) || 5
+
 const getBlogs = async (req: Request, res: Response) => {
-  const { email } = req.body
-  if (!email) {
+  const { email, pageNumber } = req.body
+  if (!email || !pageNumber) {
     return res.status(400).json({
-      message: 'Need to specify the author of the blogs'
+      message: 'email is missing or page is missing'
     })
   }
   try {
@@ -24,9 +26,11 @@ const getBlogs = async (req: Request, res: Response) => {
       })
     }
     const blogs = await BlogsModel.find({ author: email })
+      .limit(PAGE_LIMIT)
+      .skip(PAGE_LIMIT * (pageNumber - 1))
     return res.status(200).json({
       message: `All the blogs from ${email}`,
-      blogs
+      blogs: blogs.length > 0 ? blogs : 'No more blogs...'
     })
   } catch (err) {
     console.error(err)
