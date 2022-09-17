@@ -12,7 +12,7 @@ const test = (_req: Request, res: Response) => {
 const PAGE_LIMIT: number = parseInt(process.env.PAGE_LIMIT) || 5
 
 const getBlogs = async (req: Request, res: Response) => {
-  const { email, pageNumber } = req.body
+  const { email, pageNumber, sort } = req.body
   if (!email || !pageNumber) {
     return res.status(400).json({
       message: 'email is missing or page is missing'
@@ -28,6 +28,9 @@ const getBlogs = async (req: Request, res: Response) => {
     const blogs = await BlogsModel.find({ author: email })
       .limit(PAGE_LIMIT)
       .skip(PAGE_LIMIT * (pageNumber - 1))
+      .sort({
+        createdAt: sort === 'desc' ? -1 : 1
+      })
     return res.status(200).json({
       message: `All the blogs from ${email}`,
       blogs: blogs.length > 0 ? blogs : 'No more blogs...'
