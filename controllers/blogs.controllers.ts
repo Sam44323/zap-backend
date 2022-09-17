@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { decipherToken } from '../utils/functions'
 import BlogsModel from '../models/blogs.models'
-
 const test = (_req: Request, res: Response) => {
   res.status(200).json({
     message: 'Blogs-controller works!'
