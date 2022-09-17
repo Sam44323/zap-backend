@@ -1,5 +1,10 @@
 import { prop, getModelForClass } from '@typegoose/typegoose'
 
+/**
+ * @class Blog
+ * @description: Blog model for the blog collection
+ */
+
 class Blogs {
   @prop({ required: true, type: String })
   title: string
@@ -19,5 +24,4 @@ const BlogsModel = getModelForClass(Blogs, {
     customName: 'Blogs'
   }
 })
-// mongoose.model('Blogs')
 export default BlogsModel

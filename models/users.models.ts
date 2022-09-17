@@ -1,6 +1,11 @@
 import { prop, getModelForClass } from '@typegoose/typegoose'
 import mongoose from 'mongoose'
 
+/**
+ * @class User
+ * @description: User model for the user collection
+ */
+
 class User {
   @prop({ required: true, type: String })
   name: string
@@ -14,5 +19,4 @@ const UserModel = getModelForClass(User, {
     customName: 'User'
   }
 })
-// mongoose.model('User')
 export default UserModel

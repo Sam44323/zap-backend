@@ -4,22 +4,38 @@ import BlogsModel from '../models/blogs.models'
 import UserModel from '../models/users.models'
 import BlogCache from '../cache/blogs.cache'
 
+/**
+ *
+ * @param _req Request
+ * @param res Response
+ * @description: This functions is used for testing the uptime of the blogs-route
+ */
 const test = (_req: Request, res: Response) => {
   res.status(200).json({
     message: 'Blogs-controller works!'
   })
 }
 
-const PAGE_LIMIT: number = parseInt(process.env.PAGE_LIMIT) || 5
+const PAGE_LIMIT: number = parseInt(process.env.PAGE_LIMIT) || 5 // page-limit for pagination
+
+/**
+ *
+ * @param req Request
+ * @param res Response
+ * @description: This functions is used for getting all/one of the blogs based on particular filters
+ */
 
 const getBlogs = async (req: Request, res: Response) => {
   const { email, pageNumber, sort } = req.body
+
+  // payload checkers
   if (!email || !pageNumber) {
     return res.status(400).json({
       message: 'email is missing or page is missing'
     })
   }
   try {
+    // checking if the given payloads matches already cached values
     if (
       BlogCache.get('email') === email.toLowerCase() &&
       BlogCache.get('pageNumber') === pageNumber &&
@@ -41,7 +57,7 @@ const getBlogs = async (req: Request, res: Response) => {
       .limit(PAGE_LIMIT)
       .skip(PAGE_LIMIT * (pageNumber - 1))
       .sort({
-        createdAt: sort === 'desc' ? -1 : 1
+        createdAt: sort === 'desc' ? -1 : 1 // will be ascending-ly sorted by default
       })
     BlogCache.set('email', email)
     BlogCache.set('pageNumber', pageNumber)
@@ -59,6 +75,13 @@ const getBlogs = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ *
+ * @param req Request
+ * @param res Response
+ * @description: This functions is used for creating a blog
+ */
+
 const createBlog = async (req: Request, res: Response) => {
   const { title, description } = req.body
   if (!title || !description || !req.headers.authorization) {
@@ -66,9 +89,10 @@ const createBlog = async (req: Request, res: Response) => {
       message: 'Bad request'
     })
   }
-  const decipheredToken = decipherToken(req.headers.authorization)
+  const decipheredToken = decipherToken(req.headers.authorization) // deciphering the token to get the email
+
   const author = decipheredToken.email
-  console.log('Token: ', decipheredToken)
+
   try {
     const blog = new BlogsModel({
       title,
@@ -77,7 +101,9 @@ const createBlog = async (req: Request, res: Response) => {
       createdAt: new Date().toISOString()
     })
     await blog.save()
-    BlogCache.flushAll()
+
+    BlogCache.flushAll() // flushing the cache
+
     return res.status(201).json({
       message: 'Blog created successfully'
     })
@@ -89,6 +115,13 @@ const createBlog = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ *
+ * @param req Request
+ * @param res Response
+ * @description: This function is used for updating the content of the blog
+ */
+
 const updateBlog = async (req: Request, res: Response) => {
   const { title, description } = req.body
   if (!title || !description) {
@@ -97,6 +130,7 @@ const updateBlog = async (req: Request, res: Response) => {
     })
   }
   const decipheredToken = decipherToken(req.headers.authorization)
+
   const author = decipheredToken.email
   try {
     const blog = await BlogsModel.findById(req.params.id)
@@ -124,6 +158,13 @@ const updateBlog = async (req: Request, res: Response) => {
     })
   }
 }
+
+/**
+ *
+ * @param req Request
+ * @param res Response
+ * @description: This functions is used for deleting a particular blog
+ */
 
 const deleteBlog = async (req: Request, res: Response) => {
   const decipheredToken = decipherToken(req.headers.authorization)

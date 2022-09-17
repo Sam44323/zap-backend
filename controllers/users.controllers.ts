@@ -4,11 +4,25 @@ import UserModel from '../models/users.models'
 import BlogsModel from '../models/blogs.models'
 import { decipherToken, validateEmail } from '../utils/functions'
 
+/**
+ *
+ * @param _req Request
+ * @param res Response
+ * @description: This functions is used for testing the uptime of the users-route
+ */
+
 const test = (_req: Request, res: Response) => {
   res.status(200).json({
     message: 'User-controller works!'
   })
 }
+
+/**
+ *
+ * @param req Request
+ * @param res Response
+ * @description: This functions is used for signing up a new user
+ */
 
 const signup = async (req: Request, res: Response) => {
   const { name, email } = req.body
@@ -39,6 +53,13 @@ const signup = async (req: Request, res: Response) => {
     })
   }
 }
+
+/**
+ *
+ * @param req Request
+ * @param res Response
+ * @description: This functions is used for logging in an user
+ */
 
 const login = async (req: Request, res: Response) => {
   const { email } = req.body
@@ -72,6 +93,13 @@ const login = async (req: Request, res: Response) => {
     })
   }
 }
+
+/**
+ *
+ * @param req Request
+ * @param res Response
+ * @description: This functions is used for deleting an user
+ */
 
 const deleteUser = async (req: Request, res: Response) => {
   const decipheredToken: JwtPayload = decipherToken(req.headers.authorization)
