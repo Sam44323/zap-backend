@@ -1,5 +1,4 @@
-import { prop, getModelForClass, Ref } from '@typegoose/typegoose'
-import mongoose from 'mongoose'
+import { prop, getModelForClass } from '@typegoose/typegoose'
 
 class Blogs {
   @prop({ required: true, type: String })
