@@ -38,7 +38,40 @@ const createBlog = async (req: Request, res: Response) => {
   }
 }
 
-const updateBlog = async (req: Request, res: Response) => {}
+const updateBlog = async (req: Request, res: Response) => {
+  const { title, description } = req.body
+  if (!title || !description || !req.headers.authorization) {
+    return res.status(400).json({
+      message: 'Bad request'
+    })
+  }
+  const decipheredToken = decipherToken(req.headers.authorization)
+  const author = decipheredToken.email
+  try {
+    const blog = await BlogsModel.findById(req.params.id)
+    if (!blog) {
+      return res.status(404).json({
+        message: 'Blog not found'
+      })
+    }
+    if (blog.author !== author) {
+      return res.status(401).json({
+        message: 'Unauthorized'
+      })
+    }
+    blog.title = title
+    blog.description = description
+    await blog.save()
+    return res.status(200).json({
+      message: 'Blog updated successfully'
+    })
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({
+      message: 'Internal server error'
+    })
+  }
+}
 
 const deleteBlog = async (req: Request, res: Response) => {}
 
