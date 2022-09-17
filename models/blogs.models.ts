@@ -10,6 +10,9 @@ class Blogs {
 
   @prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Users' })
   author: Ref<mongoose.Schema.Types.ObjectId>
+
+  @prop({ required: true, type: Date, default: Date.now })
+  createdAt: Date
 }
 
 const BlogsModel = getModelForClass(Blogs, {
