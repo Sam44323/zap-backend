@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import authMiddleware from '../utils/auth.middleware'
 import {
   test,
   createBlog,
@@ -9,9 +10,9 @@ import {
 
 const blogsRouter = Router()
 blogsRouter.get('/test', test)
-blogsRouter.get('/getBlogs', getBlogs)
-blogsRouter.post('/blog', createBlog)
-blogsRouter.put('/blog/update/:id', updateBlog)
-blogsRouter.delete('/:id', deleteBlog)
+blogsRouter.get('/getBlogs', authMiddleware, getBlogs)
+blogsRouter.post('/blog', authMiddleware, createBlog)
+blogsRouter.put('/blog/update/:id', authMiddleware, updateBlog)
+blogsRouter.delete('/:id', authMiddleware, deleteBlog)
 
 export default blogsRouter
