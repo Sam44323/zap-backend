@@ -32,7 +32,7 @@ const signup = async (req: Request, res: Response) => {
     })
   }
   try {
-    const user = await UserModel.findOne({ email })
+    const user = await UserModel.findOne({ email: email.toLowerCase() })
     if (user) {
       return res.status(400).json({
         message: 'User already exists!'
@@ -69,7 +69,7 @@ const login = async (req: Request, res: Response) => {
     })
   }
   try {
-    const user = await UserModel.findOne({ email })
+    const user = await UserModel.findOne({ email: email.toLowerCase() })
     if (!user) {
       return res.status(400).json({
         message: 'User does not exist!'
@@ -104,13 +104,15 @@ const login = async (req: Request, res: Response) => {
 const deleteUser = async (req: Request, res: Response) => {
   const decipheredToken: JwtPayload = decipherToken(req.headers.authorization)
   try {
-    const user = await UserModel.findOne({ email: decipheredToken.email })
+    const user = await UserModel.findOne({
+      email: decipheredToken.email.toLowerCase()
+    })
     if (!user) {
       return res.status(400).json({
         message: 'User does not exist!'
       })
     }
-    await BlogsModel.deleteMany({ author: user.email })
+    await BlogsModel.deleteMany({ author: user.email.toLowerCase() })
     await UserModel.findByIdAndDelete(user._id)
     return res.status(200).json({
       message: 'User deleted successfully!'
